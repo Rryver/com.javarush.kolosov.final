@@ -4,15 +4,22 @@ import com.javarush.jira.AbstractControllerTest;
 import com.javarush.jira.common.BaseHandler;
 import com.javarush.jira.common.util.JsonUtil;
 import com.javarush.jira.login.internal.web.UserTestData;
+import com.javarush.jira.profile.ProfileTo;
 import com.javarush.jira.profile.internal.ProfileRepository;
 import com.javarush.jira.profile.internal.model.Profile;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.stream.Stream;
 
 import static com.javarush.jira.profile.internal.web.ProfileTestData.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -57,16 +64,52 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
     public void update() throws Exception {
-        long id = 1L;
-        Profile expect = ProfileTestData.getUpdated(id);
-
         MockHttpServletRequestBuilder post = MockMvcRequestBuilders.put(REST_URL_PROFILE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(JsonUtil.writeValue(ProfileTestData.getUpdatedTo(id)));
-        perform(post)
-                .andExpect(status().isNoContent());
+        perform(post).andExpect(status().isNoContent());
 
+        long id = 1L;
+        Profile expect = ProfileTestData.getUpdated(id);
         Profile actual = profileRepository.findById(id).orElseThrow();
         PROFILE_MATCHER.assertMatch(actual, expect);
+    }
+
+    @Test
+    @WithUserDetails(value = UserTestData.MANAGER_MAIL)
+    public void update_whenNew() throws Exception {
+        MockHttpServletRequestBuilder post = MockMvcRequestBuilders.put(REST_URL_PROFILE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(JsonUtil.writeValue(ProfileTestData.getNewTo()));
+        perform(post).andExpect(status().isNoContent());
+
+        long id = 3L;
+        Profile expect = ProfileTestData.getNew(id);
+        Profile actual = profileRepository.findById(id).orElseThrow();
+        PROFILE_MATCHER.assertMatch(actual, expect);
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "whenInvalidObjParams")
+    @WithUserDetails(value = UserTestData.MANAGER_MAIL)
+    public void update_whenInvalidObject(ProfileTo profileTo) throws Exception {
+        MockHttpServletRequestBuilder post = MockMvcRequestBuilders.put(REST_URL_PROFILE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(JsonUtil.writeValue(profileTo));
+        perform(post).andExpect(status().isNoContent());
+
+        long id = 3L;
+        Profile expect = ProfileTestData.getNew(id);
+        Profile actual = profileRepository.findById(id).orElseThrow();
+        PROFILE_MATCHER.assertMatch(actual, expect);
+    }
+
+    public static Stream<Arguments> whenInvalidObjParams() {
+        return Stream.of(
+                Arguments.of(ProfileTestData.getInvalidTo())
+//                Arguments.of(ProfileTestData.getWithUnknownNotificationTo()),
+//                Arguments.of(ProfileTestData.getWithContactHtmlUnsafeTo()),
+//                Arguments.of(ProfileTestData.getWithContactHtmlUnsafeTo())
+        );
     }
 }
