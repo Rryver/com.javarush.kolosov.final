@@ -156,7 +156,7 @@ public class TaskController {
 
     @PostMapping(path = "/tags", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskTagTo> addTag(@Valid @RequestBody TaskTagTo taskTagTo) {
-        taskService.addTag(taskTagTo);
+        taskTagTo = taskService.addTag(taskTagTo);
 
         return ResponseEntity.ok(taskTagTo);
     }
