@@ -7,6 +7,7 @@ import com.javarush.jira.bugtracking.sprint.Sprint;
 import com.javarush.jira.bugtracking.sprint.SprintRepository;
 import com.javarush.jira.bugtracking.task.mapper.TaskExtMapper;
 import com.javarush.jira.bugtracking.task.mapper.TaskFullMapper;
+import com.javarush.jira.bugtracking.task.to.TaskTagTo;
 import com.javarush.jira.bugtracking.task.to.TaskToExt;
 import com.javarush.jira.bugtracking.task.to.TaskToFull;
 import com.javarush.jira.common.error.DataConflictException;
@@ -80,7 +81,9 @@ public class TaskService {
 
     @Transactional
     public void update(TaskToExt taskTo, long id) {
-        if (!taskTo.equals(get(taskTo.id()))) {
+        TaskToFull o = get(taskTo.id());
+        String s = "qwe";
+        if (!taskTo.equals(o)) {
             handler.updateFromTo(taskTo, id);
             activityHandler.create(makeActivity(id, taskTo));
         }
@@ -139,5 +142,20 @@ public class TaskService {
         if (!userType.equals(possibleUserType)) {
             throw new DataConflictException(String.format(assign ? CANNOT_ASSIGN : CANNOT_UN_ASSIGN, userType, task.getStatusCode()));
         }
+    }
+
+    @Transactional
+    public TaskTagTo addTag(TaskTagTo taskTagTo) {
+        TaskToFull taskToFull = this.get(taskTagTo.getTaskId());
+        taskToFull.getTags().add(taskTagTo.getTag());
+        update(taskToFull, taskToFull.id());
+        return taskTagTo;
+    }
+
+    @Transactional
+    public void deleteTag(TaskTagTo taskTagTo) {
+        TaskToFull taskToFull = this.get(taskTagTo.getTaskId());
+        taskToFull.getTags().remove(taskTagTo.getTag());
+        update(taskToFull, taskToFull.id());
     }
 }

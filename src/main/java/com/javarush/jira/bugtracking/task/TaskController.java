@@ -3,10 +3,7 @@ package com.javarush.jira.bugtracking.task;
 import com.javarush.jira.bugtracking.Handlers;
 import com.javarush.jira.bugtracking.UserBelong;
 import com.javarush.jira.bugtracking.UserBelongRepository;
-import com.javarush.jira.bugtracking.task.to.ActivityTo;
-import com.javarush.jira.bugtracking.task.to.TaskTo;
-import com.javarush.jira.bugtracking.task.to.TaskToExt;
-import com.javarush.jira.bugtracking.task.to.TaskToFull;
+import com.javarush.jira.bugtracking.task.to.*;
 import com.javarush.jira.bugtracking.tree.ITreeNode;
 import com.javarush.jira.common.util.Util;
 import com.javarush.jira.login.AuthUser;
@@ -155,5 +152,18 @@ public class TaskController {
         public TaskTreeNode(TaskTo taskTo) {
             this(taskTo, new LinkedList<>());
         }
+    }
+
+    @PostMapping(path = "/tags", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskTagTo> addTag(@Valid @RequestBody TaskTagTo taskTagTo) {
+        taskService.addTag(taskTagTo);
+
+        return ResponseEntity.ok(taskTagTo);
+    }
+
+    @DeleteMapping(path = "/tags", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTag(@Valid @RequestBody TaskTagTo taskTagTo) {
+        taskService.deleteTag(taskTagTo);
     }
 }

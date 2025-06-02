@@ -5,6 +5,7 @@ import org.mapstruct.MappingTarget;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface BaseMapper<E, T extends BaseTo> {
 
@@ -17,4 +18,6 @@ public interface BaseMapper<E, T extends BaseTo> {
     T toTo(E entity);
 
     List<T> toToList(Collection<E> entities);
+
+    Set<T> toToList(Set<E> entities);
 }
