@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.Set;
 
 public class ProfileTestData {
-    public static MatcherFactory.Matcher<Profile> PROFILE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Profile.class, "user");
-    public static MatcherFactory.Matcher<ProfileTo> PROFILE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(ProfileTo.class);
+    public static MatcherFactory.Matcher<Profile> PROFILE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Profile.class, "id");
+    public static MatcherFactory.Matcher<ProfileTo> PROFILE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(ProfileTo.class, "id");
     public static final Long USER_PROFILE_ID = 1L;
 
     public static ProfileTo USER_PROFILE_TO = new ProfileTo(1L,

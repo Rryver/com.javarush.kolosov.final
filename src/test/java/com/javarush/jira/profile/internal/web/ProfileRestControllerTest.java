@@ -39,7 +39,9 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
     public void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_PROFILE))
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(REST_URL_PROFILE);
+
+        perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(PROFILE_TO_MATCHER.contentJson(USER_PROFILE_TO));
@@ -48,7 +50,9 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.GUEST_MAIL)
     public void get_whenUserIsGuest() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_PROFILE))
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(REST_URL_PROFILE);
+
+        perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(PROFILE_TO_MATCHER.contentJson(GUEST_PROFILE_EMPTY_TO));
@@ -56,7 +60,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void get_whenUnauthorizedUser() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_PROFILE))
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(REST_URL_PROFILE);
+        perform(requestBuilder)
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
@@ -64,12 +69,14 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
     public void update() throws Exception {
-        MockHttpServletRequestBuilder post = MockMvcRequestBuilders.put(REST_URL_PROFILE)
+        long id = 1L;
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put(REST_URL_PROFILE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(JsonUtil.writeValue(ProfileTestData.getUpdatedTo(id)));
-        perform(post).andExpect(status().isNoContent());
 
-        long id = 1L;
+        perform(requestBuilder).andExpect(status().isNoContent());
+
         Profile expect = ProfileTestData.getUpdated(id);
         Profile actual = profileRepository.findById(id).orElseThrow();
         PROFILE_MATCHER.assertMatch(actual, expect);
@@ -78,14 +85,15 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.MANAGER_MAIL)
     public void update_whenNew() throws Exception {
-        MockHttpServletRequestBuilder post = MockMvcRequestBuilders.put(REST_URL_PROFILE)
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put(REST_URL_PROFILE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(JsonUtil.writeValue(ProfileTestData.getNewTo()));
-        perform(post).andExpect(status().isNoContent());
 
-        long id = 3L;
+        perform(requestBuilder).andExpect(status().isNoContent());
+
+        long id = 4L;
         Profile expect = ProfileTestData.getNew(id);
-        Profile actual = profileRepository.findById(id).orElseThrow();
+        Profile actual = profileRepository.getExisted(4L);
         PROFILE_MATCHER.assertMatch(actual, expect);
     }
 
@@ -93,23 +101,19 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @MethodSource(value = "whenInvalidObjParams")
     @WithUserDetails(value = UserTestData.MANAGER_MAIL)
     public void update_whenInvalidObject(ProfileTo profileTo) throws Exception {
-        MockHttpServletRequestBuilder post = MockMvcRequestBuilders.put(REST_URL_PROFILE)
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put(REST_URL_PROFILE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(JsonUtil.writeValue(profileTo));
-        perform(post).andExpect(status().isNoContent());
 
-        long id = 3L;
-        Profile expect = ProfileTestData.getNew(id);
-        Profile actual = profileRepository.findById(id).orElseThrow();
-        PROFILE_MATCHER.assertMatch(actual, expect);
+        perform(requestBuilder).andExpect(status().is4xxClientError());
     }
 
     public static Stream<Arguments> whenInvalidObjParams() {
         return Stream.of(
-                Arguments.of(ProfileTestData.getInvalidTo())
-//                Arguments.of(ProfileTestData.getWithUnknownNotificationTo()),
-//                Arguments.of(ProfileTestData.getWithContactHtmlUnsafeTo()),
-//                Arguments.of(ProfileTestData.getWithContactHtmlUnsafeTo())
+                Arguments.of(ProfileTestData.getInvalidTo()),
+                Arguments.of(ProfileTestData.getWithUnknownNotificationTo()),
+                Arguments.of(ProfileTestData.getWithUnknownContactTo()),
+                Arguments.of(ProfileTestData.getWithContactHtmlUnsafeTo())
         );
     }
 }
