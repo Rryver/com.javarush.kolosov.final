@@ -323,5 +323,9 @@ values (6, 1, '2023-05-15 09:05:10', null, 'Data', null, 3, 'epic', 'in_progress
        (6, 1, '2023-05-15 14:05:10', null, 'Data', null, 4, null, null, null), ---task 118----
        (11, 118, '2023-05-16 10:05:10', null, 'UI tab of tasks', null, 4, 'task', 'in_progress', 'normal'),
        (5, 118, '2023-05-16 11:10:10', null, 'UI tab of tasks', null, null, null, null, 'high'),
-       (11, 118, '2023-05-16 12:30:10', null, 'UI tab of tasks', null, 2, null, null, null);
+       (11, 118, '2023-05-16 12:30:10', null, 'UI tab of tasks', null, 2, null, null, null),
+
+       (6, 2, now() * interval '10 minutes', null, 'Trees', null, 3, 'epic', 'in_progress', 'low'),
+       (6, 2, now() * interval '15 minutes', null, 'Trees', null, 3, 'epic', 'ready_for_review', 'low'),
+       (6, 2, now() + interval '20 minutes', null, 'Trees', null, 3, 'epic', 'done', 'low');
 
