@@ -15,6 +15,11 @@ public class TaskToFull extends TaskToExt {
     @Setter
     List<ActivityTo> activityTos;
 
+    @Setter
+    long totalTimeInProgressStatus = 0;
+    @Setter
+    long totalTimeInTestingStatus = 0;
+
     public TaskToFull(Long id, String code, String title, String description, String typeCode, String statusCode, String priorityCode,
                       LocalDateTime updated, Integer estimate, CodeTo parent, CodeTo project, CodeTo sprint, List<ActivityTo> activityTos) {
         super(id, code, title, description, typeCode, statusCode, priorityCode, updated, estimate,

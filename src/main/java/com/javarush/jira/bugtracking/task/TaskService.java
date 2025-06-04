@@ -7,6 +7,7 @@ import com.javarush.jira.bugtracking.sprint.Sprint;
 import com.javarush.jira.bugtracking.sprint.SprintRepository;
 import com.javarush.jira.bugtracking.task.mapper.TaskExtMapper;
 import com.javarush.jira.bugtracking.task.mapper.TaskFullMapper;
+import com.javarush.jira.bugtracking.task.to.ActivityTo;
 import com.javarush.jira.bugtracking.task.to.TaskTagTo;
 import com.javarush.jira.bugtracking.task.to.TaskToExt;
 import com.javarush.jira.bugtracking.task.to.TaskToFull;
@@ -19,9 +20,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 import static com.javarush.jira.bugtracking.ObjectType.TASK;
 import static com.javarush.jira.bugtracking.task.TaskUtil.fillExtraFields;
@@ -95,6 +99,9 @@ public class TaskService {
         List<Activity> activities = activityHandler.getRepository().findAllByTaskIdOrderByUpdatedDesc(id);
         fillExtraFields(taskToFull, activities);
         taskToFull.setActivityTos(activityHandler.getMapper().toToList(activities));
+        taskToFull.setTotalTimeInProgressStatus(calculateTimeSpentInStatus(taskToFull, "in_progress"));
+        taskToFull.setTotalTimeInTestingStatus(calculateTimeSpentInStatus(taskToFull, "test"));
+
         return taskToFull;
     }
 
@@ -157,5 +164,49 @@ public class TaskService {
         TaskToFull taskToFull = this.get(taskTagTo.getTaskId());
         taskToFull.getTags().remove(taskTagTo.getTag());
         update(taskToFull, taskToFull.id());
+    }
+
+    public long calculateTimeSpentInStatus(TaskToFull taskToFull, String targetStatus) {
+        List<ActivityTo> activities = taskToFull.getActivityTos().stream()
+                .sorted((o1, o2) -> {
+                    if (o1.getUpdated() == null || o2.getUpdated() == null) {
+                        return 0;
+                    }
+                    return o1.getUpdated().compareTo(o2.getUpdated());
+                })
+                .toList();
+
+        if (CollectionUtils.isEmpty(activities)) {
+            return 0;
+        }
+
+        long result = 0;
+        for (int i = 0; i < activities.size(); i++) {
+            ActivityTo activityStart = activities.get(i);
+            boolean activityStartHasEnd = false;
+            if (!Objects.equals(activityStart.getStatusCode(), targetStatus) || activityStart.getUpdated() == null) {
+                continue;
+            }
+
+            ActivityTo activityEnd = null;
+            for (int j = i + 1; j < activities.size(); j++) {
+                activityEnd = activities.get(j);
+                if (!Objects.equals(activityEnd.getStatusCode(), targetStatus) && activityEnd.getUpdated() != null) {
+                    activityStartHasEnd = true;
+                    i = j;
+                    break;
+                }
+            }
+
+            LocalDateTime start = activityStart.getUpdated();
+            if (activityStartHasEnd) {
+                LocalDateTime end = activityEnd.getUpdated();
+                result += (start.until(end, ChronoUnit.SECONDS));
+            } else {
+                result += (start.until(LocalDateTime.now(), ChronoUnit.SECONDS));
+            }
+        }
+
+        return result;
     }
 }
