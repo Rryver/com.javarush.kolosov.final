@@ -118,6 +118,11 @@
     color: white;
 }
 
+.lang-selector a:hover {
+    color: #000000 !important;
+    background: #e9ecef;
+}
+
 .header-nav ul li.active, .header-nav ul li.active a {
     color: white;
     font-weight: bold;
@@ -274,3 +279,4 @@
     max-height: clamp(5em, 50vh, 300px);
     overflow: auto;
 }
+
