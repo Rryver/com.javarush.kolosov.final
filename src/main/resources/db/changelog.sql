@@ -91,7 +91,8 @@ create table USERS
     LAST_NAME    varchar(32),
     PASSWORD     varchar(128) not null,
     ENDPOINT     timestamp,
-    STARTPOINT   timestamp
+    STARTPOINT   timestamp,
+    LOCALE       varchar(32)
 );
 
 create table PROFILE

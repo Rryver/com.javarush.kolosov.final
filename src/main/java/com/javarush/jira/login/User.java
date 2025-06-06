@@ -74,6 +74,9 @@ public class User extends TimestampEntry implements HasIdAndEmail, Serializable 
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
 
+    @Column(name = "locale")
+    private String locale;
+
     public User(User user) {
         this(user.id, user.email, user.password, user.firstName, user.lastName, user.displayName,
                 user.startpoint, user.endpoint, user.roles);

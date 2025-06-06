@@ -8,6 +8,7 @@ import com.javarush.jira.common.util.Util;
 import com.javarush.jira.login.User;
 import com.javarush.jira.mail.internal.MailCase;
 import com.javarush.jira.mail.internal.MailCaseRepository;
+import jakarta.annotation.Nullable;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.NonNull;
@@ -29,7 +30,7 @@ import java.util.concurrent.*;
 @Service
 @RequiredArgsConstructor
 public class MailService {
-    private static final Locale LOCALE_RU = Locale.forLanguageTag("ru");
+    private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("ru");
     private static final String OK = "OK";
 
     private final MailCaseRepository mailCaseRepository;
@@ -63,7 +64,7 @@ public class MailService {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
             message.setFrom(email, "JiraRush");
-            String content = getContent(template, params);
+            String content = getContent(template, null, params);
             message.setText(content, true);
             message.setSubject(Util.getTitle(content));  // TODO calculate title for group emailing only once
             message.setTo(new InternetAddress(toEmail, toName, "UTF-8"));
@@ -78,8 +79,11 @@ public class MailService {
         return result;
     }
 
-    private String getContent(String template, Map<String, Object> params) {
-        Context context = new Context(LOCALE_RU, params);
+    private String getContent(String template, @Nullable Locale locale, Map<String, Object> params) {
+        if (locale == null) {
+            locale = DEFAULT_LOCALE;
+        }
+        Context context = new Context(locale, params);
         return templateEngine.process(template, context);
     }
 
