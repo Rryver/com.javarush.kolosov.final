@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.javarush.jira.common.HasIdAndEmail;
+import com.javarush.jira.common.LocaleConverter;
 import com.javarush.jira.common.model.TimestampEntry;
 import com.javarush.jira.common.util.validation.NoHtml;
 import com.javarush.jira.common.util.validation.View;
@@ -23,10 +24,7 @@ import org.springframework.util.StringUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -75,27 +73,42 @@ public class User extends TimestampEntry implements HasIdAndEmail, Serializable 
     private Set<Role> roles;
 
     @Column(name = "locale")
-    private String locale;
+    @Convert(converter = LocaleConverter.class)
+    private Locale locale;
 
     public User(User user) {
         this(user.id, user.email, user.password, user.firstName, user.lastName, user.displayName,
-                user.startpoint, user.endpoint, user.roles);
+                user.startpoint, user.endpoint, user.locale, user.roles);
     }
 
-    public User(Long id, String email, String password, String firstName, String lastName, String displayName,
+    public User(Long id,
+                String email,
+                String password,
+                String firstName,
+                String lastName,
+                String displayName,
                 Role... roles) {
         this(id, email, password, firstName, lastName, displayName,
-                LocalDateTime.now(), null, Arrays.asList(roles));
+                LocalDateTime.now(), null, null, Arrays.asList(roles));
     }
 
-    public User(Long id, String email, String password, String firstName, String lastName, String displayName,
-                LocalDateTime startpoint, LocalDateTime endpoint, Collection<Role> roles) {
+    public User(Long id,
+                String email,
+                String password,
+                String firstName,
+                String lastName,
+                String displayName,
+                LocalDateTime startpoint,
+                LocalDateTime endpoint,
+                Locale locale,
+                Collection<Role> roles) {
         super(id, startpoint, endpoint);
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.displayName = displayName;
+        this.locale = locale;
         setRoles(roles);
         normalize();
     }

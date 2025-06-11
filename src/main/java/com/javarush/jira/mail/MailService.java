@@ -51,20 +51,20 @@ public class MailService {
         return OK.equals(result);
     }
 
-    public String sendToUserWithParams(@NonNull String template, @NonNull User user, @NonNull Map<String, Object> params) {
+    public String sendToUserWithParams(@NonNull String template, @NonNull User user, @Nullable Locale locale, @NonNull Map<String, Object> params) {
         String email = Objects.requireNonNull(user.getEmail());
         Map<String, Object> extParams = Util.mergeMap(params, Map.of("user", user));
-        return send(appConfig.isProd() ? email : appProperties.getTestMail(), user.getFirstName(), template, extParams);
+        return send(appConfig.isProd() ? email : appProperties.getTestMail(), user.getFirstName(), template, locale, extParams);
     }
 
-    public String send(String toEmail, String toName, String template, Map<String, Object> params) {
+    public String send(String toEmail, String toName, String template, @Nullable Locale locale, Map<String, Object> params) {
         log.debug("Send email to {}, {} with template {}", toEmail, toName, template);
         String result = OK;
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
             message.setFrom(email, "JiraRush");
-            String content = getContent(template, null, params);
+            String content = getContent(template, locale, params);
             message.setText(content, true);
             message.setSubject(Util.getTitle(content));  // TODO calculate title for group emailing only once
             message.setTo(new InternetAddress(toEmail, toName, "UTF-8"));
@@ -95,7 +95,7 @@ public class MailService {
         Map<Future<String>, String> resultMap = new HashMap<>();
         users.forEach(
                 user -> {
-                    Future<String> future = completionService.submit(() -> sendToUserWithParams(template, user, params));
+                    Future<String> future = completionService.submit(() -> sendToUserWithParams(template, user, user.getLocale(), params));
                     resultMap.put(future, user.getEmail());
                 }
         );
@@ -123,7 +123,7 @@ public class MailService {
 
     @Async("mailExecutor")
     public void sendToUserAsync(@NonNull String template, @NonNull User user, Map<String, Object> params) {
-        sendToUserWithParams(template, user, params);
+        sendToUserWithParams(template, user, user.getLocale(), params);
     }
 
     private void cancelAll(Map<Future<String>, String> resultMap) {

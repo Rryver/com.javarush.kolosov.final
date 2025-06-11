@@ -327,5 +327,5 @@
 
            (6, 2, now() + random() * interval '10 minutes', null, 'Trees', null, 3, 'epic', 'in_progress', 'low'),
            (6, 2, now() + random() * interval '15 minutes', null, 'Trees', null, 3, 'epic', 'ready_for_review', 'low'),
-           (6, 2, now() + random() + interval '20 minutes', null, 'Trees', null, 3, 'epic', 'done', 'low');
+           (6, 2, now() + random() * interval '20 minutes', null, 'Trees', null, 3, 'epic', 'done', 'low');
 

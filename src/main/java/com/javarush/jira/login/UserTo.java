@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -47,13 +48,20 @@ public class UserTo extends BaseTo implements HasIdAndEmail, Serializable {
     @NoHtml
     private String displayName;
 
+    private Locale locale;
+
     public UserTo(Long id, String email, String password, String firstName, String lastName, String displayName) {
+        this(id, email, password, firstName, lastName, displayName, null);
+    }
+
+    public UserTo(Long id, String email, String password, String firstName, String lastName, String displayName, Locale locale) {
         super(id);
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.displayName = displayName;
+        this.locale = locale;
     }
 
     @Override

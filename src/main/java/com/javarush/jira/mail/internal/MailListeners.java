@@ -8,6 +8,7 @@ import com.javarush.jira.login.internal.verification.RegistrationConfirmEvent;
 import com.javarush.jira.mail.MailService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -23,6 +24,7 @@ public class MailListeners {
     public void confirmRegistration(RegistrationConfirmEvent event) {
         String confirmationUrl = appProperties.getHostUrl() + "/ui/register/confirm?token=" + event.token();
         User user = userMapper.toEntity(event.userto());
+        user.setLocale(LocaleContextHolder.getLocale());
         mailService.sendToUserAsync("email-confirmation.html", user, Map.of("confirmationUrl", confirmationUrl));
     }
 

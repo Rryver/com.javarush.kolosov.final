@@ -6,11 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.WebRequest;
@@ -38,7 +35,7 @@ import java.util.Properties;
 @AllArgsConstructor
 @Slf4j
 public class MvcConfig implements WebMvcConfigurer {
-    private final AppProperties appProperties;
+    private final UserRepository userRepository;
 
     // Add authUser to view model
     private final HandlerInterceptor authInterceptor = new WebRequestHandlerInterceptorAdapter(new WebRequestInterceptor() {
@@ -64,7 +61,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor).excludePathPatterns("/api/**");
-        registry.addInterceptor(localeChangeInterceptor());
+        registry.addInterceptor(localeChangeInterceptor(userRepository));
     }
 
     //  http://www.codejava.net/frameworks/spring/spring-mvc-url-based-view-resolution-with-urlfilenameviewcontroller-example
@@ -113,8 +110,8 @@ public class MvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+    public LocaleChangeInterceptor localeChangeInterceptor(UserRepository userRepository) {
+        LocaleChangeInterceptor interceptor = new DbAndSessionLocaleChangeInterceptor(userRepository);
         interceptor.setParamName("lang");
         return interceptor;
     }

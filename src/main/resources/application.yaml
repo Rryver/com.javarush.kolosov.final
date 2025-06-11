@@ -26,7 +26,7 @@ spring:
         # https://stackoverflow.com/questions/21257819/what-is-the-difference-between-hibernate-jdbc-fetch-size-and-hibernate-jdbc-batc
         jdbc.batch_size: 20
   datasource:
-    url: jdbc:postgresql://localhost:5433/jira-test
+    url: jdbc:postgresql://localhost:5432/jira
     username: jira
     password: JiraRush
 
@@ -86,9 +86,9 @@ spring:
           starttls:
             enable: true
           auth: true
-    host: smtp.gmail.com
-    username: jira4jr@gmail.com
-    password: zdfzsrqvgimldzyj
+    host: smtp.yandex.ru
+    username: ryver.mailer@yandex.ru
+    password: sinoblcmolmguvhb
     port: 587
   thymeleaf.check-template-location: false
 

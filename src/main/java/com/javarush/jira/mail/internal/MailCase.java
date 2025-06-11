@@ -5,7 +5,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -43,7 +42,7 @@ public class MailCase extends BaseEntity {
 
     @CreationTimestamp
     @Column(name = "date_time", nullable = false, updatable = false)
-    @NotNull
+//    @NotNull
     private LocalDateTime dateTime;
 
     public MailCase(String email, String name, String template, String result) {

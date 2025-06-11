@@ -17,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
+import java.util.Locale;
+
 import static com.javarush.jira.common.util.validation.ValidationUtil.checkNew;
 
 @Controller
@@ -35,12 +37,16 @@ public class RegisterController extends AbstractUserController {
     }
 
     @PostMapping
-    public String register(@Validated(View.OnCreate.class) UserTo userTo, BindingResult result, HttpServletRequest request) {
+    public String register(@Validated(View.OnCreate.class) UserTo userTo,
+                           BindingResult result,
+                           HttpServletRequest request,
+                           Locale locale) {
         if (result.hasErrors()) {
             return "unauth/register";
         }
         log.info("register {}", userTo);
         checkNew(userTo);
+        userTo.setLocale(locale);
         ConfirmData confirmData = new ConfirmData(userTo);
         request.getSession().setAttribute("token", confirmData);
         eventPublisher.publishEvent(new RegistrationConfirmEvent(userTo, confirmData.getToken()));
@@ -48,8 +54,11 @@ public class RegisterController extends AbstractUserController {
     }
 
     @GetMapping("/confirm")
-    public String confirmRegistration(@RequestParam String token, SessionStatus status, HttpSession session,
-                                      @SessionAttribute("token") ConfirmData confirmData) {
+    public String confirmRegistration(@RequestParam String token,
+                                      SessionStatus status,
+                                      HttpSession session,
+                                      @SessionAttribute("token") ConfirmData confirmData,
+                                      Locale locale) {
         log.info("confirm registration {}", confirmData);
         if (token.equals(confirmData.getToken())) {
             handler.createFromTo(confirmData.getUserTo());
