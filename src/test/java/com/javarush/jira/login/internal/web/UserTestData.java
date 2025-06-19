@@ -6,11 +6,13 @@ import com.javarush.jira.login.Role;
 import com.javarush.jira.login.User;
 import com.javarush.jira.login.UserTo;
 
+import java.util.Locale;
+
 public class UserTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(
             User.class, "startpoint", "endpoint", "password");
 
-    public static final MatcherFactory.Matcher<UserTo> TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(UserTo.class);
+    public static final MatcherFactory.Matcher<UserTo> TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(UserTo.class, "locale");
 
     public static final long USER_ID = 1;
     public static final long ADMIN_ID = 2;
@@ -23,12 +25,13 @@ public class UserTestData {
     public static final String MANAGER_MAIL = "manager@gmail.com";
 
     public static final User user = new User(USER_ID, USER_MAIL, "password", "userFirstName", "userLastName",
-            "userDisplayName", Role.DEV);
+            "userDisplayName", Locale.forLanguageTag("ru"), Role.DEV);
     public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "admin", "adminFirstName", "adminLastName",
-            "adminDisplayName", Role.ADMIN, Role.DEV);
+            "adminDisplayName", Locale.forLanguageTag("ru"), Role.ADMIN, Role.DEV);
     public static final User guest = new User(GUEST_ID, GUEST_MAIL, "guest", "guestFirstName", "guestLastName",
-            "guestDisplayName");
-    public static final User manager = new User(MANAGER_ID, MANAGER_MAIL, "manager", "managerFirstName", "managerLastName", "managerDisplayName", Role.MANAGER);
+            "guestDisplayName", Locale.forLanguageTag("ru"));
+    public static final User manager = new User(MANAGER_ID, MANAGER_MAIL, "manager", "managerFirstName", "managerLastName",
+            "managerDisplayName", Locale.forLanguageTag("ru"), Role.MANAGER);
 
     public static User getNew() {
         return new User(null, "new@gmail.com", "newPassword", "newFirstName", "newLastName", "newDisplayName", Role.DEV);

@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -89,7 +90,19 @@ public class User extends TimestampEntry implements HasIdAndEmail, Serializable 
                 String displayName,
                 Role... roles) {
         this(id, email, password, firstName, lastName, displayName,
-                LocalDateTime.now(), null, null, Arrays.asList(roles));
+                LocalDateTime.now(), null, LocaleContextHolder.getLocale(), Arrays.asList(roles));
+    }
+
+    public User(Long id,
+                String email,
+                String password,
+                String firstName,
+                String lastName,
+                String displayName,
+                Locale locale,
+                Role... roles) {
+        this(id, email, password, firstName, lastName, displayName,
+                LocalDateTime.now(), null, locale, Arrays.asList(roles));
     }
 
     public User(Long id,

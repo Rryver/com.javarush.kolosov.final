@@ -46,7 +46,9 @@ public class RegisterController extends AbstractUserController {
         }
         log.info("register {}", userTo);
         checkNew(userTo);
-        userTo.setLocale(locale);
+        if (userTo.getLocale() == null) {
+            userTo.setLocale(locale);
+        }
         ConfirmData confirmData = new ConfirmData(userTo);
         request.getSession().setAttribute("token", confirmData);
         eventPublisher.publishEvent(new RegistrationConfirmEvent(userTo, confirmData.getToken()));

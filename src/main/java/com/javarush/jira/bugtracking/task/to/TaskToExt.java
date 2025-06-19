@@ -43,12 +43,14 @@ public class TaskToExt extends TaskTo {
                      Integer estimate,
                      Long parentId,
                      long projectId,
-                     Long sprintId) {
+                     Long sprintId,
+                     Set<String> tags) {
         super(id, code, title, typeCode, statusCode, parentId, projectId, sprintId);
         this.description = description;
         this.priorityCode = priorityCode;
         this.updated = updated;
         this.estimate = estimate;
+        this.tags = tags;
     }
 
     @Override

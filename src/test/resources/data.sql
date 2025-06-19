@@ -8,31 +8,29 @@ from PROFILE;
 
 delete
 from ACTIVITY;
-alter
-sequence ACTIVITY_ID_SEQ restart with 1;
+ALTER TABLE ACTIVITY ALTER COLUMN ID RESTART WITH 1;
+
 delete
 from TASK;
-alter
-sequence TASK_ID_SEQ restart with 1;
+ALTER TABLE TASK ALTER COLUMN ID RESTART WITH 1;
+
 delete
 from SPRINT;
-alter
-sequence SPRINT_ID_SEQ restart with 1;
+ALTER TABLE SPRINT ALTER COLUMN ID RESTART WITH 1;
+
 delete
 from PROJECT;
-alter
-sequence PROJECT_ID_SEQ restart with 1;
+ALTER TABLE PROJECT ALTER COLUMN ID RESTART WITH 1;
 
 delete
 from USERS;
-alter
-sequence USERS_ID_SEQ restart with 1;
+ALTER TABLE USERS ALTER COLUMN ID RESTART WITH 1;
 
-insert into USERS (EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, DISPLAY_NAME)
-values ('user@gmail.com', '{noop}password', 'userFirstName', 'userLastName', 'userDisplayName'),
-       ('admin@gmail.com', '{noop}admin', 'adminFirstName', 'adminLastName', 'adminDisplayName'),
-       ('guest@gmail.com', '{noop}guest', 'guestFirstName', 'guestLastName', 'guestDisplayName'),
-       ('manager@gmail.com', '{noop}manager', 'managerFirstName', 'managerLastName', 'managerDisplayName');
+insert into USERS (EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, DISPLAY_NAME, LOCALE)
+values ('user@gmail.com', '{noop}password', 'userFirstName', 'userLastName', 'userDisplayName', 'ru'),
+       ('admin@gmail.com', '{noop}admin', 'adminFirstName', 'adminLastName', 'adminDisplayName', 'ru'),
+       ('guest@gmail.com', '{noop}guest', 'guestFirstName', 'guestLastName', 'guestDisplayName', 'ru'),
+       ('manager@gmail.com', '{noop}manager', 'managerFirstName', 'managerLastName', 'managerDisplayName', 'ru');
 
 -- 0 DEV
 -- 1 ADMIN
@@ -121,12 +119,12 @@ values (1, 1, '2023-05-15 09:05:10', null, 'Data', null, 3, 'epic', 'in_progress
 insert into USER_BELONG (OBJECT_ID, OBJECT_TYPE, USER_ID, USER_TYPE_CODE, STARTPOINT, ENDPOINT)
 values (1, 2, 2, 'task_developer', '2023-06-14 08:35:10', '2023-06-14 08:55:00'),
        (1, 2, 2, 'task_reviewer', '2023-06-14 09:35:10', null),
-       (1, 2, 1, 'task_developer', '2023-06-12 11:40:00', '2023-06-12 12:35:00'),
+--        (1, 2, 1, 'task_developer', '2023-06-12 11:40:00', '2023-06-12 12:35:00'),
        (1, 2, 1, 'task_developer', '2023-06-13 12:35:00', null),
        (1, 2, 1, 'task_tester', '2023-06-14 15:20:00', null),
        (2, 2, 2, 'task_developer', '2023-06-08 07:10:00', null),
        (2, 2, 1, 'task_developer', '2023-06-09 14:48:00', null),
        (2, 2, 1, 'task_tester', '2023-06-10 16:37:00', null);
 
-insert into ACTIVITY (AUTHOR_ID, TASK_ID, UPDATED, STATUS_CODE ) values (
-    1, 1, '2023-05-15 09:05:10', 'in_progress')
+-- insert into ACTIVITY (AUTHOR_ID, TASK_ID, UPDATED, STATUS_CODE ) values (
+--     1, 1, '2023-05-15 09:05:10', 'in_progress')

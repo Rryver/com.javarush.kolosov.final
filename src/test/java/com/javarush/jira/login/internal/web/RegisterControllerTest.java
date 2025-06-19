@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import static com.javarush.jira.login.internal.web.RegisterController.REGISTER_URL;
@@ -35,7 +36,8 @@ class RegisterControllerTest extends AbstractControllerTest {
 
     @Test
     void register() throws Exception {
-        UserTo newTo = new UserTo(null, "newemail@gmail.com", "newPassword", "newName", "newLastName", "newDisplayName");
+        String locale = "ru";
+        UserTo newTo = new UserTo(null, "newemail@gmail.com", "newPassword", "newName", "newLastName", "newDisplayName", Locale.forLanguageTag(locale));
 
         Object sessionToken = Objects.requireNonNull(perform(MockMvcRequestBuilders.post(REGISTER_URL)
                         .param("email", "newemail@gmail.com")
@@ -43,6 +45,7 @@ class RegisterControllerTest extends AbstractControllerTest {
                         .param("firstName", "newName")
                         .param("lastName", "newLastName")
                         .param("displayName", "newDisplayName")
+                        .param("locale", locale)
                         .with(csrf()))
                         .andExpect(status().isFound())
                         .andExpect(redirectedUrl("/view/login"))

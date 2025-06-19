@@ -12,6 +12,9 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.HashSet;
+import java.util.List;
+
 import static com.javarush.jira.bugtracking.ObjectType.TASK;
 import static com.javarush.jira.bugtracking.task.TaskController.REST_URL;
 import static com.javarush.jira.bugtracking.task.TaskService.CANNOT_ASSIGN;
@@ -122,13 +125,14 @@ class TaskControllerTest extends AbstractControllerTest {
     void updateTaskWhenStateNotChanged() throws Exception {
         int activitiesCount = activityRepository.findAllByTaskIdOrderByUpdatedDesc(TASK2_ID).size();
         TaskToExt sameStateTo = new TaskToExt(TASK2_ID, taskTo2.getCode(), taskTo2.getTitle(), "Trees desc", taskTo2.getTypeCode(),
-                taskTo2.getStatusCode(), "normal", null, 4, taskTo2.getParentId(), taskTo2.getProjectId(), taskTo2.getSprintId());
+                taskTo2.getStatusCode(), "normal", null, 4, taskTo2.getParentId(), taskTo2.getProjectId(), taskTo2.getSprintId(), new HashSet<>());
         perform(MockMvcRequestBuilders.put(TASKS_REST_URL_SLASH + TASK2_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(sameStateTo)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertEquals(activitiesCount, activityRepository.findAllByTaskIdOrderByUpdatedDesc(TASK2_ID).size());
+        List<Activity> allByTaskIdOrderByUpdatedDesc = activityRepository.findAllByTaskIdOrderByUpdatedDesc(TASK2_ID);
+        assertEquals(activitiesCount, allByTaskIdOrderByUpdatedDesc.size());
     }
 
     @Test
@@ -142,7 +146,7 @@ class TaskControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void updateTaskWhenProjectNotExists() throws Exception {
-        TaskToExt notExistsProjectTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, NOT_FOUND, SPRINT1_ID);
+        TaskToExt notExistsProjectTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, NOT_FOUND, SPRINT1_ID, new HashSet<>());
         perform(MockMvcRequestBuilders.put(TASKS_REST_URL_SLASH + TASK2_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(notExistsProjectTo)))
@@ -163,7 +167,7 @@ class TaskControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void updateTaskWhenChangeProject() throws Exception {
-        TaskToExt changedProjectTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, PROJECT1_ID + 1, SPRINT1_ID);
+        TaskToExt changedProjectTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, PROJECT1_ID + 1, SPRINT1_ID, new HashSet<>());
         perform(MockMvcRequestBuilders.put(TASKS_REST_URL_SLASH + TASK2_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(changedProjectTo)))
@@ -174,7 +178,7 @@ class TaskControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void updateSprintIdWhenDev() throws Exception {
-        TaskToExt changedSprintTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, PROJECT1_ID, SPRINT1_ID + 1);
+        TaskToExt changedSprintTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, PROJECT1_ID, SPRINT1_ID + 1, new HashSet<>());
         perform(MockMvcRequestBuilders.put(TASKS_REST_URL_SLASH + TASK2_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(changedSprintTo)))
@@ -185,7 +189,7 @@ class TaskControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void updateSprintIdWhenAdmin() throws Exception {
-        TaskToExt changedSprintTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, PROJECT1_ID, SPRINT1_ID + 1);
+        TaskToExt changedSprintTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, PROJECT1_ID, SPRINT1_ID + 1, new HashSet<>());
         perform(MockMvcRequestBuilders.put(TASKS_REST_URL_SLASH + TASK2_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(changedSprintTo)))
@@ -197,7 +201,7 @@ class TaskControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = MANAGER_MAIL)
     void updateSprintIdWhenManager() throws Exception {
-        TaskToExt changedSprintTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, PROJECT1_ID, SPRINT1_ID + 1);
+        TaskToExt changedSprintTo = new TaskToExt(TASK2_ID, "epic-2", "Trees UPD", "task UPD", "epic", "in_progress", "high", null, 4, null, PROJECT1_ID, SPRINT1_ID + 1, new HashSet<>());
         perform(MockMvcRequestBuilders.put(TASKS_REST_URL_SLASH + TASK2_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(changedSprintTo)))
@@ -376,7 +380,7 @@ class TaskControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createTaskInvalid() throws Exception {
-        TaskToExt invalidTo = new TaskToExt(null, "", null, null, "epic", null, null, null, 3, null, PROJECT1_ID, SPRINT1_ID);
+        TaskToExt invalidTo = new TaskToExt(null, "", null, null, "epic", null, null, null, 3, null, PROJECT1_ID, SPRINT1_ID, new HashSet<>());
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(invalidTo)))
@@ -387,7 +391,7 @@ class TaskControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createTaskWhenProjectNotExists() throws Exception {
-        TaskToExt notExistsProjectTo = new TaskToExt(null, "epic-1", "Data New", "task NEW", "epic", "in_progress", "low", null, 3, null, NOT_FOUND, SPRINT1_ID);
+        TaskToExt notExistsProjectTo = new TaskToExt(null, "epic-1", "Data New", "task NEW", "epic", "in_progress", "low", null, 3, null, NOT_FOUND, SPRINT1_ID, new HashSet<>());
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(notExistsProjectTo)))
