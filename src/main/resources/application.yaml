@@ -26,7 +26,8 @@ spring:
         # https://stackoverflow.com/questions/21257819/what-is-the-difference-between-hibernate-jdbc-fetch-size-and-hibernate-jdbc-batc
         jdbc.batch_size: 20
   datasource:
-    url: jdbc:postgresql://localhost:5432/jira
+#    url: jdbc:postgresql://localhost:5433/jira-test
+    url: jdbc:postgresql://postgres-container/jira
     username: jira
     password: JiraRush
 
@@ -110,4 +111,5 @@ server:
       charset: UTF-8 # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly
       enabled: true # Enable http encoding support
       force: true
+  port: 8080
 springdoc.swagger-ui.path: /doc
