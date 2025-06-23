@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${OAUTH_GITHUB_CLIENT_ID}
+            client-secret: ${OAUTH_GITHUB_CLIENT_SECRET}
+            scope:
+              - email
+          google:
+            client-id: ${OAUTH_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+          gitlab:
+            client-id: ${OAUTH_GITLAB_CLIENT_ID}
+            client-secret: ${OAUTH_GITLAB_CLIENT_SECRET}
+            client-name: GitLab
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            scope: read_user
+        provider:
+          gitlab:
+            authorization-uri: https://gitlab.com/oauth/authorize
+            token-uri: https://gitlab.com/oauth/token
+            user-info-uri: https://gitlab.com/api/v4/user
+            user-name-attribute: email
+
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+    host: ${SMTP_HOST}
+    username: ${SMTP_PORT}
+    password: ${SMTP_USERNAME}
+    port: ${SMTP_PASSWORD}
