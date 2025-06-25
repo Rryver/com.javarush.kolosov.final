@@ -1,18 +1,19 @@
 version: '3.8'
 services:
   app:
-    container_name: jru-final-app
+    container_name: app-container
     image: client:0.0.1
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+#    ports:
+#      - "8080:8080" # Закоментированно для доступа только через nginx
     depends_on:
       service-db:
         condition: service_healthy
     networks:
       - postgres
+      - nginx
     environment:
       DB_HOST: postgres-container # localhost:5432 or docker container name
       DB_NAME: jira
@@ -53,7 +54,7 @@ services:
       retries: 5
 
   pgadmin:
-    container_name: pgadmin4-container
+    container_name: pgadmin-container
     image: dpage/pgadmin4:latest
     restart: always
     environment:
@@ -74,6 +75,21 @@ services:
     networks:
       - postgres
 
+  nginx:
+    container_name: nginx-container
+    image: nginx:latest
+#    restart: unless-stopped
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./resources/static:/usr/share/nginx/static
+      - ./resources/robots.txt:/usr/share/nginx/robots.txt:ro
+    ports:
+      - "80:80"
+    networks:
+      - nginx
+    depends_on:
+      - app
+
 volumes:
   db-data:
   pgadmin-data:
@@ -81,3 +97,5 @@ volumes:
 
 networks:
   postgres:
+  nginx:
+    driver: bridge
