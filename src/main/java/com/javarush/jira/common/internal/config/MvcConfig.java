@@ -73,6 +73,7 @@ public class MvcConfig implements WebMvcConfigurer {
             }});
             setOrder(0);
             setInterceptors(authInterceptor);
+            setInterceptors(localeChangeInterceptor(userRepository));
         }};
     }
 
