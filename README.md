@@ -90,7 +90,7 @@ docker run -p 5432:5432 --name postgres-db -e POSTGRES_USER=jira -e POSTGRES_PAS
 
     Cтрока `Environment Variables` для копирования в конфигурацию запуска.
     ```properties
-    DB_HOST=localhost:5432;DB_NAME=jira;DB_PASSWORD=JiraRush;DB_USERNAME=jira;OAUTH_GITHUB_CLIENT_ID=3d0d8738e65881fff266;OAUTH_GITHUB_CLIENT_SECRET=0f97031ce6178b7dfb67a6af587f37e222a16120;OAUTH_GITLAB_CLIENT_ID=b8520a3266089063c0d8261cce36971defa513f5ffd9f9b7a3d16728fc83a494;OAUTH_GITLAB_CLIENT_SECRET=e72c65320cf9d6495984a37b0f9cc03ec46be0bb6f071feaebbfe75168117004;OAUTH_GOOGLE_CLIENT_ID=329113642700-f8if6pu68j2repq3ef6umd5jgiliup60.apps.googleusercontent.com;OAUTH_GOOGLE_CLIENT_SECRET=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;SMTP_HOST=smtp.yandex.ru;SMTP_PASSWORD=587;SMTP_PORT=ryver.mailer@yandex.ru;SMTP_USERNAME=sinoblcmolmguvhb
+    DB_HOST=localhost:5432;DB_NAME=jira;DB_PASSWORD=JiraRush;DB_USERNAME=jira;OAUTH_GITHUB_CLIENT_ID=3d0d8738e65881fff266;OAUTH_GITHUB_CLIENT_SECRET=0f97031ce6178b7dfb67a6af587f37e222a16120;OAUTH_GITLAB_CLIENT_ID=b8520a3266089063c0d8261cce36971defa513f5ffd9f9b7a3d16728fc83a494;OAUTH_GITLAB_CLIENT_SECRET=e72c65320cf9d6495984a37b0f9cc03ec46be0bb6f071feaebbfe75168117004;OAUTH_GOOGLE_CLIENT_ID=329113642700-f8if6pu68j2repq3ef6umd5jgiliup60.apps.googleusercontent.com;OAUTH_GOOGLE_CLIENT_SECRET=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;SMTP_HOST=smtp.yandex.ru;SMTP_PORT=587;SMTP_USERNAME=ryver.mailer@yandex.ru;SMTP_PASSWORD=sinoblcmolmguvhb
     ```
 
     Удобочитаемый вид строки `Environment Variables`:
@@ -106,9 +106,9 @@ docker run -p 5432:5432 --name postgres-db -e POSTGRES_USER=jira -e POSTGRES_PAS
     OAUTH_GOOGLE_CLIENT_ID=329113642700-f8if6pu68j2repq3ef6umd5jgiliup60.apps.googleusercontent.com;
     OAUTH_GOOGLE_CLIENT_SECRET=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;
     SMTP_HOST=smtp.yandex.ru;
-    SMTP_PASSWORD=587;
-    SMTP_PORT=ryver.mailer@yandex.ru;
-    SMTP_USERNAME=sinoblcmolmguvhb
+    SMTP_PORT=587;
+    SMTP_USERNAME=ryver.mailer@yandex.ru;
+    SMTP_PASSWORD=sinoblcmolmguvhb;
     ```
 
     Если поле для `Environment Variables` в настройках конфигурации запуска выключено, то включить его, сделав следующее (см. скриншот): 
